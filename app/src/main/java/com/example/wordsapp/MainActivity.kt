@@ -16,6 +16,7 @@
 package com.example.wordsapp
 
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
@@ -28,6 +29,19 @@ import com.example.wordsapp.databinding.ActivityMainBinding
 /**
  * Main Activity and entry point for the app. Displays a RecyclerView of letters.
  */
+class MainActivity : AppCompatActivity() {
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        Log.d("TAGG2", "onCreate()")
+
+        val binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+    }
+}
+
+// old MainActivity:
+/*
 class MainActivity : AppCompatActivity() {
     private lateinit var recyclerView: RecyclerView
     private var isLinearLayoutManager = true
@@ -91,4 +105,4 @@ class MainActivity : AppCompatActivity() {
         }
     }
 }
-// test push from work
+ */

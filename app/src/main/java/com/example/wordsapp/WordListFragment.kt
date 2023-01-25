@@ -1,59 +1,88 @@
 package com.example.wordsapp
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
+import android.util.Log
 import android.view.LayoutInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.wordsapp.databinding.FragmentWordListBinding
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
-/**
- * A simple [Fragment] subclass.
- * Use the [WordListFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class WordListFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
+    companion object {
+        const val LETTER = "letter"
+        const val SEARCH_PREFIX = "https://www.google.com/search?q="
+    }
+
+    private var _binding: FragmentWordListBinding? = null
+    private val binding get() = _binding!!
+    private var isLinearLayoutManager = true
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        _binding = FragmentWordListBinding.inflate(inflater, container, false)
+        //val view = binding.root
+        Log.d("TAGG2", "onCreateView()")
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        val recyclerView = binding.recyclerView
+        recyclerView.layoutManager = LinearLayoutManager(requireContext())
+        recyclerView.adapter = WordAdapter(activity?.intent?.extras?.getString(LETTER).toString(), requireContext())
+        recyclerView.addItemDecoration(
+            DividerItemDecoration(context, DividerItemDecoration.VERTICAL)
+        )
+        Log.d("TAGG2", "onViewCreated()")
+    }
+
+    private fun setIcon(menuItem: MenuItem?) {
+        if (menuItem == null) return
+
+        menuItem.icon = if (isLinearLayoutManager)
+            ContextCompat.getDrawable(this.requireContext(), R.drawable.ic_grid_layout)
+        else ContextCompat.getDrawable(this.requireContext(), R.drawable.ic_linear_layout)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.action_switch_layout -> {
+                // Sets isLinearLayoutManager (a Boolean) to the opposite value
+                isLinearLayoutManager = !isLinearLayoutManager
+                // Sets layout and icon
+                setIcon(item)
+
+                return true
+            }
+            else -> super.onOptionsItemSelected(item)
         }
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_word_list, container, false)
-    }
-
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment WordListFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            WordListFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
-            }
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+        Log.d("TAGG2", "onDestroyView()")
     }
 }
+
+/*
+val letterId = intent?.extras?.getString(LETTER).toString()
+
+        val recyclerView = binding.recyclerView
+        recyclerView.layoutManager = LinearLayoutManager(this)
+        recyclerView.adapter = WordAdapter(letterId, this)
+
+        recyclerView.addItemDecoration(
+            DividerItemDecoration(this, DividerItemDecoration.VERTICAL)
+        )
+
+        title = getString(R.string.detail_prefix) + " " + letterId
+ */
